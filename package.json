@@ -1,0 +1,30 @@
+{
+  "name": "ekyc-assessment",
+  "version": "1.0.0",
+  "private": true,
+  "description": "eKYC Fullstack Assessment - Mobile onboarding + Backend API",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "api": "yarn workspace api dev",
+    "mobile": "yarn workspace mobile start",
+    "test": "yarn workspaces run test",
+    "test:api": "yarn workspace api test",
+    "test:mobile": "yarn workspace mobile test",
+    "lint": "eslint . --ext .ts,.tsx",
+    "format": "prettier --write \"**/*.{ts,tsx,json,md}\""
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.45.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.1.6"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "yarn": ">=1.22.0"
+  },
+  "packageManager": "yarn@1.22.19"
+}
