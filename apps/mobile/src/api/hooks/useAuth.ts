@@ -11,7 +11,7 @@ export const useLogin = () => {
   const queryClient = useQueryClient();
   const { setSession, setStatus, setError } = useAuthStore();
 
-  return useMutation({
+  const { mutate, isPending, error, data } = useMutation({
     mutationFn: ({ email, password }: any) => login(email, password),
 
     onMutate: () => {
@@ -20,15 +20,21 @@ export const useLogin = () => {
     },
 
     onSuccess: (response) => {
+      // save session to store
       setSession(response.user, response.session);
+
+      // invladiate and refrecht the user data
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ME });
     },
 
     onError: (err: any) => {
+      // set error and reset status
       setError(err.response?.data?.error?.message || "Login failed");
       setStatus(AuthStatus.LOGGED_OUT);
     },
   });
+
+  return { login: mutate, isPending, error, data };
 };
 
 /**
@@ -37,22 +43,25 @@ export const useLogin = () => {
 export const useGetMe = () => {
   const { status, clearSession } = useAuthStore();
 
-  return useQuery({
+  const { data, isLoading, error, refetch, isRefetching } = useQuery({
     queryKey: QUERY_KEYS.ME,
     queryFn: async () => {
       try {
         return await getMe();
       } catch (err: any) {
+        // if 401 force logout to prevent infite loops
         if (err.response?.status === 401) {
           clearSession();
         }
         throw err;
       }
     },
-    enabled: status === AuthStatus.LOGGED_IN,
-    retry: false,
-    staleTime: 5 * 60 * 1000,
+    enabled: status === AuthStatus.LOGGED_IN, // only fetch when logged in
+    retry: false, // dont retry on error
+    staleTime: 5 * 60 * 1000, // 5 mins
   });
+
+  return { data, user: data, isLoading, error, refetch, isRefetching };
 };
 
 /**
@@ -63,7 +72,10 @@ export const useLogout = () => {
   const { clearSession } = useAuthStore();
 
   const logout = () => {
+    // clear session from store
     clearSession();
+
+    // clear all cached queries
     queryClient.clear();
   };
 
