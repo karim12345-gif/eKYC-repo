@@ -1,5 +1,5 @@
-import { useThemeStore } from '../store/themeStore';
-import { lightTheme, darkTheme, Theme } from './tokens';
+import { useThemeStore } from "../store/themeStore";
+import { lightTheme, darkTheme, Theme } from "./tokens";
 
 /**
  * useTheme Hook
@@ -10,5 +10,5 @@ import { lightTheme, darkTheme, Theme } from './tokens';
 export const useTheme = (): Theme => {
   const { theme } = useThemeStore();
 
-  return theme === 'dark' ? darkTheme : lightTheme;
+  return theme === "dark" ? darkTheme : lightTheme;
 };

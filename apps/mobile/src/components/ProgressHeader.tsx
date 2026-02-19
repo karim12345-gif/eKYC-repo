@@ -1,13 +1,13 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '../theme/useTheme';
-import { Theme } from '../theme/tokens';
+import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "../theme/useTheme";
+import { Theme } from "../theme/tokens";
 
 interface ProgressHeaderProps {
   currentStep: number;
   totalSteps: number;
-  onBack?: () => void;
+  onBack?: () => void | Promise<void>;
 }
 
 const getStyles = (theme: Theme) =>
@@ -19,8 +19,8 @@ const getStyles = (theme: Theme) =>
       backgroundColor: theme.colors.background,
     },
     headerRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
+      flexDirection: "row",
+      alignItems: "center",
       marginBottom: 16,
     },
     backButton: {
@@ -28,17 +28,17 @@ const getStyles = (theme: Theme) =>
     },
     title: {
       fontSize: 20,
-      fontWeight: '700',
+      fontWeight: "700",
       color: theme.colors.text,
     },
     progressContainer: {
       height: 6,
       backgroundColor: theme.colors.surface,
       borderRadius: 3,
-      overflow: 'hidden',
+      overflow: "hidden",
     },
     progressBar: {
-      height: '100%',
+      height: "100%",
       backgroundColor: theme.colors.primary,
       borderRadius: 3,
     },
@@ -46,7 +46,7 @@ const getStyles = (theme: Theme) =>
       fontSize: 12,
       color: theme.colors.textSecondary,
       marginBottom: 8,
-      fontWeight: '600',
+      fontWeight: "600",
     },
   });
 
