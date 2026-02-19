@@ -1,5 +1,6 @@
 import { store } from "../store";
 import { OnboardingDraft, OnboardingSubmitResponse } from "../types";
+import { verificationService } from "./verification.service";
 
 const submitOnboarding = async (
   userId: string,
@@ -23,6 +24,14 @@ const submitOnboarding = async (
     details: {
       reasons: [],
     },
+  });
+
+  // Automatically start verification process (simulation)
+  verificationService.processVerification(userId).catch((err) => {
+    console.error(
+      `Failed to start verification process for user ${userId}`,
+      err,
+    );
   });
 
   console.log(

@@ -26,7 +26,11 @@ const processVerification = async (
   // check if user has submitted onboarding
   const currentStatus = await store.getVerificationStatus(userId);
 
-  if (!currentStatus || currentStatus.status !== "IN_PROGRESS" && status !== "NOT_STARTED") {
+  if (
+    !currentStatus ||
+    (currentStatus.status !== "IN_PROGRESS" &&
+      currentStatus.status !== "NOT_STARTED")
+  ) {
     throw new Error("VERIFICATION_NOT_IN_PROGRESS");
   }
 
