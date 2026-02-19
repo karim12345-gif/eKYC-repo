@@ -45,7 +45,7 @@ export const useStartVerification = () => {
     },
   });
 
-  return { startVerfication: mutate, isPending, error, data };
+  return { startVerification: mutate, isPending, error, data };
 };
 
 // hook for resetting verificaiton status for testing

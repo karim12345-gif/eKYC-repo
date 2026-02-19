@@ -9,6 +9,26 @@ import { OnboardingDraft, OnboardingSubmissionStatus } from "../../types";
  * Manages onboarding progress, draft data, and persistence
  */
 
+const INITIAL_DRAFT: OnboardingDraft = {
+  profile: {
+    fullName: "",
+    dateOfBirth: "",
+    nationality: "",
+  },
+  document: {
+    documentType: "PASSPORT",
+    documentNumber: "",
+  },
+  address: {
+    addressLine1: "",
+    city: "",
+    country: "",
+  },
+  consents: {
+    termsAccepted: false,
+  },
+};
+
 interface OnboardingState {
   draft: OnboardingDraft;
   currentStep: number;
@@ -27,52 +47,53 @@ interface OnboardingState {
 
 export const useOnboardingStore = create<OnboardingState>()(
   persist(
-    // save to asyncstorage
-
     (set, get) => ({
-      draft: {},
+      draft: INITIAL_DRAFT,
       currentStep: 1,
       status: OnboardingSubmissionStatus.IDLE,
       error: null,
 
       updateDraft: (section, data) =>
-        set((state) => ({
-          draft: { ...state.draft, [section]: data },
-        })),
+        set((state) => {
+          // Ensure the section exists in the draft to prevent property access errors
+          const currentSection = state.draft[section] || INITIAL_DRAFT[section];
+          return {
+            draft: {
+              ...state.draft,
+              [section]: { ...currentSection, ...data },
+            },
+          };
+        }),
 
       setStep: (step) => {
         if (step >= 1 && step <= 5) {
-          return set({ currentStep: step });
+          set({ currentStep: step });
         }
       },
 
       nextStep: () => {
         const currentStep = get().currentStep;
         if (currentStep < 5) {
-          return set({ currentStep: currentStep + 1 });
+          set({ currentStep: currentStep + 1 });
         }
       },
 
       prevStep: () => {
         const currentStep = get().currentStep;
         if (currentStep > 1) {
-          return set({ currentStep: currentStep - 1 });
+          set({ currentStep: currentStep - 1 });
         }
       },
 
       submitDraft: async () => {
         const { draft } = get();
 
-        if (!draft) {
-          throw new Error("No draft data to submit");
-        }
-
         set({ status: OnboardingSubmissionStatus.SUBMITTING, error: null });
         try {
           await submitOnboarding(draft);
           set({
             status: OnboardingSubmissionStatus.SUCCESS,
-            draft: {},
+            draft: INITIAL_DRAFT,
             currentStep: 1,
             error: null,
           });
@@ -87,7 +108,7 @@ export const useOnboardingStore = create<OnboardingState>()(
 
       clearDraft: () =>
         set({
-          draft: {},
+          draft: INITIAL_DRAFT,
           currentStep: 1,
           status: OnboardingSubmissionStatus.IDLE,
           error: null,
@@ -99,6 +120,18 @@ export const useOnboardingStore = create<OnboardingState>()(
     {
       name: "onboarding-storage",
       storage: createJSONStorage(() => AsyncStorage),
+      version: 2, // Increment version to trigger fresh initial state for users on older version
+      migrate: (persistedState: any, version: number) => {
+        if (version < 2) {
+          // If the old state doesn't have the expected draft structure, reset it
+          return {
+            ...persistedState,
+            draft: INITIAL_DRAFT,
+            version: 2,
+          };
+        }
+        return persistedState;
+      },
     },
   ),
 );

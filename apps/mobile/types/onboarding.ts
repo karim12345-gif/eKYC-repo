@@ -5,7 +5,7 @@ export interface OnboardingDraft {
     nationality: string;
   };
   document: {
-    documentType: "PASSPORT" | "ID_CARD" | "DRIVERS_LICENSE";
+    documentType: "PASSPORT" | "NATIONAL_ID" | "DRIVING_LICENSE";
     documentNumber: string;
   };
   address: {

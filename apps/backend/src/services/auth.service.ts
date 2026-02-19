@@ -59,9 +59,11 @@ const login = async (email: string, password: string) => {
       email: user.email,
       fullName: user.fullName,
     },
-    accessToken,
-    refreshToken,
-    expiresAt: accessExpiresAt,
+    session: {
+      accessToken,
+      refreshToken,
+      expiresAt: accessExpiresAt,
+    },
   };
 };
 
